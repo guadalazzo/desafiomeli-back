@@ -13,19 +13,23 @@ app.use(function(req, res, next) {
 
 var fs      = require('file-system')
 var _ 			= require('lodash')
+app.get('/', async(req,res,next)=>{
+	const data = await fetch(`https://api.mercadolibre.com/sites/MLA/`);
+	const response = await data.json();
+	 res.json({response})
+})
+app.get('/items/:id', async (req, res,next) => {
+  const { id } = req.params
+  const data = await fetch(`https://api.mercadolibre.com/items/${id}`);
+  const item = await data.json();
 
+  res.json({item})
+})
 app.get('/items', async (req, res,next) => {
   const { search } = req.query
   const data = await fetch(`https://api.mercadolibre.com/sites/MLA/search?q=:${search}`);
   const itemsearch = await data.json();
   res.json({itemsearch})
-})
-app.get('/items/:id', async (req, res,next) => {
-  const { id } = req.params
-  const data = await fetch(`https://api.mercadolibre.com/items/${id}`);
-  const items = await data.json();
-
-  res.json({items})
 })
 
 var server  = app.listen(3001, ()=> 
