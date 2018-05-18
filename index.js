@@ -20,10 +20,35 @@ app.get('/', async(req,res,next)=>{
 })
 app.get('/items/:id', async (req, res,next) => {
   const { id } = req.params
-  const data = await fetch(`https://api.mercadolibre.com/items/${id}`);
-  const item = await data.json();
 
-  res.json({item})
+
+  const data = await fetch(`https://api.mercadolibre.com/items/${id}`);
+  const itemResult = await data.json();
+  
+
+  const description = await fetch(`https://api.mercadolibre.com/items/${id}/description`);
+  const description_parsered = await description.json();
+  
+
+  res.json( {
+         item: {
+            id:id,
+            title:itemResult.title,
+            price: {
+              currency:itemResult.currency_id,
+              amount:itemResult.price,
+              decimals:2
+            },
+            pictures: itemResult.pictures[0].url,
+            condition:itemResult.condition,
+            free_shipping:itemResult.shipping.free_shipping,
+            sold_quantity:itemResult.sold_quantity,
+            description:description_parsered.plain_text
+          }
+      })
+
+
+  
 })
 app.get('/items', async (req, res,next) => {
   const { search } = req.query
