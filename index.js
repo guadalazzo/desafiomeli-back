@@ -23,7 +23,6 @@ app.get("/", async (req, res, next) => {
 });
 app.get("/items/:id", async (req, res, next) => {
   const { id } = req.params;
-
   const data = await fetch(`https://api.mercadolibre.com/items/${id}`);
   const itemResult = await data.json();
 
@@ -55,7 +54,23 @@ app.get("/items", async (req, res, next) => {
     `https://api.mercadolibre.com/sites/MLA/search?q=:${search}`
   );
   const itemSearch = await data.json();
-  res.json({itemSearch});
+  res.json({
+      items: itemSearch.results.map(result => {
+          return {
+              id: result.id,
+              title:result.title,
+              price:{
+                  currency: result.currency_id ,
+                  amount:result.price,
+                  decimals:2
+              },
+              picture: result.thumbnail ,
+              condition:result.condition,
+              free_shipping:result.shipping.free_shipping,
+              location:result.address.state_name
+          }
+      })
+  });
 });
 
 const server = app.listen(3001, () =>
