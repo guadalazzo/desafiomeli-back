@@ -1,7 +1,6 @@
 {
-  "name": "express-try",
+  "name": "Middleware de Mercadolibre",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -13,9 +12,7 @@
   "dependencies": {
     "body-parser": "^1.18.2",
     "express": "^4.16.3",
-    "file-system": "^2.2.2",
     "isomorphic-fetch": "^2.2.1",
-    "lodash": "^4.17.10",
     "micro-cors": "^0.1.0",
     "microrouter": "^3.1.3"
   },

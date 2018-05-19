@@ -3,7 +3,7 @@ const express = require("express");
 const body_parser = require("body-parser");
 
 const app = express();
-
+const API_URL = 'https://api.mercadolibre.com'
 app.use(body_parser.urlencoded({ extended: true }));
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -14,22 +14,20 @@ app.use(function(req, res, next) {
   next();
 });
 
-let fs = require("file-system");
-let _ = require("lodash");
 app.get("/", async (req, res, next) => {
-  const data = await fetch(`https://api.mercadolibre.com/sites/MLA/`);
+  const data = await fetch(`${API_URL}/sites/MLA/`);
   const response = await data.json();
   res.json({response})
 });
 app.get("/items/:id", async (req, res, next) => {
   const { id } = req.params;
-  const data = await fetch(`https://api.mercadolibre.com/items/${id}`);
+  const data = await fetch(`${API_URL}/items/${id}`);
   const itemResult = await data.json();
 
   const description = await fetch(
-    `https://api.mercadolibre.com/items/${id}/description`
+    `${API_URL}/items/${id}/description`
   );
-  const description_parsed = await description.json();
+  const descriptionParsed = await description.json();
 
   res.json({
     item: {
@@ -44,14 +42,14 @@ app.get("/items/:id", async (req, res, next) => {
       condition: itemResult.condition,
       free_shipping: itemResult.shipping.free_shipping,
       sold_quantity: itemResult.sold_quantity,
-      description: description_parsed.plain_text
+      description: descriptionParsed.plain_text
     }
   });
 });
 app.get("/items", async (req, res, next) => {
   const { search } = req.query;
   const data = await fetch(
-    `https://api.mercadolibre.com/sites/MLA/search?q=:${search}`
+    `${API_URL}/sites/MLA/search?q=:${search}`
   );
   const itemSearch = await data.json();
   res.json({
