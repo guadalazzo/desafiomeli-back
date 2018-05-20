@@ -3,7 +3,8 @@ const express = require("express");
 const body_parser = require("body-parser");
 
 const app = express();
-const API_URL = 'https://api.mercadolibre.com'
+const limitResult = 4;
+const API_URL = "https://api.mercadolibre.com";
 app.use(body_parser.urlencoded({ extended: true }));
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -17,16 +18,14 @@ app.use(function(req, res, next) {
 app.get("/", async (req, res, next) => {
   const data = await fetch(`${API_URL}/sites/MLA/`);
   const response = await data.json();
-  res.json({response})
+  res.json({ response });
 });
 app.get("/items/:id", async (req, res, next) => {
   const { id } = req.params;
   const data = await fetch(`${API_URL}/items/${id}`);
   const itemResult = await data.json();
 
-  const description = await fetch(
-    `${API_URL}/items/${id}/description`
-  );
+  const description = await fetch(`${API_URL}/items/${id}/description`);
   const descriptionParsed = await description.json();
 
   res.json({
@@ -49,25 +48,25 @@ app.get("/items/:id", async (req, res, next) => {
 app.get("/items", async (req, res, next) => {
   const { search } = req.query;
   const data = await fetch(
-    `${API_URL}/sites/MLA/search?q=:${search}`
+    `${API_URL}/sites/MLA/search?q=:${search}&limit=${limitResult}`
   );
   const itemSearch = await data.json();
   res.json({
-      items: itemSearch.results.map(result => {
-          return {
-              id: result.id,
-              title:result.title,
-              price:{
-                  currency: result.currency_id ,
-                  amount:result.price,
-                  decimals:2
-              },
-              picture: result.thumbnail ,
-              condition:result.condition,
-              free_shipping:result.shipping.free_shipping,
-              location:result.address.state_name
-          }
-      })
+    items: itemSearch.results.map(result => {
+      return {
+        id: result.id,
+        title: result.title,
+        price: {
+          currency: result.currency_id,
+          amount: result.price,
+          decimals: 2
+        },
+        picture: result.thumbnail,
+        condition: result.condition,
+        free_shipping: result.shipping.free_shipping,
+        location: result.address.state_name
+      };
+    })
   });
 });
 
